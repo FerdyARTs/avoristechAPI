@@ -8,6 +8,6 @@ import java.util.Date;
 import java.util.List;
 
 @Repository
-public interface ReservaRepository extends JpaRepository<ReservaEntity, Long>{
+public interface ReservaRepository extends JpaRepository<ReservaEntity, String>{
 
 }

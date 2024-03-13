@@ -13,8 +13,8 @@ import java.util.List;
 public class ReservaEntity {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long searchId;
+    @Column(name = "search_id")
+    private String searchId;
 
     @Column(name = "hotel_id")
     private String hotelId;
@@ -33,7 +33,7 @@ public class ReservaEntity {
     public ReservaEntity() {
     }
 
-    public ReservaEntity(Long searchId, String hotelId, Date checkIn, Date checkOut, List<Integer> edades) {
+    public ReservaEntity(String searchId, String hotelId, Date checkIn, Date checkOut, List<Integer> edades) {
         this.searchId = searchId;
         this.hotelId = hotelId;
         this.checkIn = checkIn;
@@ -41,11 +41,11 @@ public class ReservaEntity {
         this.edades = edades;
     }
 
-    public Long getSearchId() {
+    public String getSearchId() {
         return searchId;
     }
 
-    public void setSearchId(Long searchId) {
+    public void setSearchId(String searchId) {
         this.searchId = searchId;
     }
 

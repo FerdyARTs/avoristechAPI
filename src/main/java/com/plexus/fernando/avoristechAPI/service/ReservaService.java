@@ -8,9 +8,9 @@ import java.util.Optional;
 public interface ReservaService {
     ReservaEntity crearReserva(ReservaEntity reserva);
 
-    Long devolverIdentificador(ReservaDto reserva);
+    String guardarBDyDevolverIdentificador(ReservaDto reserva);
 
-    Optional<ReservaEntity> obtenerReservaPorId(Long searchId);
+    Optional<ReservaEntity> obtenerReservaPorId(String searchId);
 
     int getContador();
 }
