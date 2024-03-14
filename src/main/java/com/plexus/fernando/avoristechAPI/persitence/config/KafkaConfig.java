@@ -1,6 +1,6 @@
 package com.plexus.fernando.avoristechAPI.persitence.config;
 
-import com.plexus.fernando.avoristechAPI.persitence.Dto.ReservaSearchDto;
+
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.common.serialization.IntegerDeserializer;
@@ -10,8 +10,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.kafka.config.ConcurrentKafkaListenerContainerFactory;
 import org.springframework.kafka.core.*;
-import org.springframework.kafka.support.serializer.JsonDeserializer;
-import org.springframework.kafka.support.serializer.JsonSerializer;
 import org.springframework.stereotype.Component;
 
 import java.util.HashMap;
@@ -32,24 +30,23 @@ public class KafkaConfig {
         props.put(ConsumerConfig.GROUP_ID_CONFIG,"group");
         props.put(ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG,true);
         props.put(ConsumerConfig.AUTO_COMMIT_INTERVAL_MS_CONFIG,"100");
-        props.put(ConsumerConfig.SESSION_TIMEOUT_MS_CONFIG,"60000");
-        props.put(ConsumerConfig.HEARTBEAT_INTERVAL_MS_CONFIG, "1000");
-        props.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
-        props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, JsonDeserializer.class);
-        props.put(JsonDeserializer.TRUSTED_PACKAGES, "com.plexus.fernando.avoristechAPI.persitence.Dto");
+        props.put(ConsumerConfig.SESSION_TIMEOUT_MS_CONFIG,"15000");
+//        props.put(ConsumerConfig.HEARTBEAT_INTERVAL_MS_CONFIG, "1000");
+        props.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, IntegerDeserializer.class);
+        props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
 
         return props;
 
     }
 
     @Bean
-    public ConsumerFactory<String, ReservaSearchDto>consumerFactory(){
+    public ConsumerFactory<Integer, String>consumerFactory(){
         return new DefaultKafkaConsumerFactory<>(consumerProps());
     }
 
     @Bean
-    public ConcurrentKafkaListenerContainerFactory<String,ReservaSearchDto> kafkaListenerContainerFactory(){
-        ConcurrentKafkaListenerContainerFactory<String,ReservaSearchDto> factory = new ConcurrentKafkaListenerContainerFactory<>();
+    public ConcurrentKafkaListenerContainerFactory<Integer, String> kafkaListenerContainerFactory(){
+        ConcurrentKafkaListenerContainerFactory<Integer, String> factory = new ConcurrentKafkaListenerContainerFactory<>();
         factory.setConsumerFactory(consumerFactory());
         return factory;
     }
@@ -63,18 +60,18 @@ public class KafkaConfig {
         props.put(ProducerConfig.BATCH_SIZE_CONFIG,16384);
         props.put(ProducerConfig.LINGER_MS_CONFIG,1);
         props.put(ProducerConfig.BUFFER_MEMORY_CONFIG,33554432);
-        props.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
-        props.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, JsonSerializer.class);
+        props.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, IntegerDeserializer.class);
+        props.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
 
         return props;
     }
 
     @Bean
-    public KafkaTemplate<String, ReservaSearchDto> createTemplate(){
+    public KafkaTemplate<Integer, String> createTemplate(){
         Map<String, Object> configProps = producerProps();
-        ProducerFactory<String, ReservaSearchDto> pf = new DefaultKafkaProducerFactory<String, ReservaSearchDto>(configProps);
+        ProducerFactory<Integer, String> pf = new DefaultKafkaProducerFactory<Integer, String>(configProps);
 
-        KafkaTemplate<String, ReservaSearchDto> template = new KafkaTemplate<>(pf);
+        KafkaTemplate<Integer, String> template = new KafkaTemplate<>(pf);
 
         return template;
     }

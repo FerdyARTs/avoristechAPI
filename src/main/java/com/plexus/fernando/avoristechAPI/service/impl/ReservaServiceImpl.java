@@ -1,20 +1,22 @@
 package com.plexus.fernando.avoristechAPI.service.impl;
 
+
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.plexus.fernando.avoristechAPI.persitence.Dto.ReservaDto;
 import com.plexus.fernando.avoristechAPI.persitence.Dto.ReservaSearchDto;
-import com.plexus.fernando.avoristechAPI.persitence.config.KakfaListener;
+
+
 import com.plexus.fernando.avoristechAPI.persitence.model.ReservaEntity;
 
 import com.plexus.fernando.avoristechAPI.persitence.repository.ReservaRepository;
 import com.plexus.fernando.avoristechAPI.service.ReservaService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 
 import java.util.Optional;
@@ -31,21 +33,21 @@ public class ReservaServiceImpl implements ReservaService {
     ReservaRepository reservaRepository;
 
     @Autowired
-    KafkaTemplate<String, ReservaSearchDto> kafkaTemplate;
+    KafkaTemplate<Integer, String> kafkaTemplate;
 
     private AtomicInteger count;
 
+    private ObjectMapper mapper = new ObjectMapper();
     private static final String CHARACTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-    private static final int LENGTH = 5;
+    private static final int LENGTH = 7;
 
-    private static final Logger log = LoggerFactory.getLogger(KakfaListener.class);
+
     public ReservaServiceImpl(ReservaRepository reservaRepository) {
         this.reservaRepository = reservaRepository;
         this.count = new AtomicInteger(0);
     }
 
     public ReservaEntity crearReserva(ReservaEntity reserva) {
-        log.info("LLegamos al create con lo siguiente: {}", reserva);
         ReservaEntity nuevaReserva = reservaRepository.save(reserva);
         return nuevaReserva;
     }
@@ -53,7 +55,11 @@ public class ReservaServiceImpl implements ReservaService {
     public String guardarBDyDevolverIdentificador(ReservaDto reserva){
         String searchId = this.generarSearchId();
         ReservaSearchDto reservaSearchDto = new ReservaSearchDto(searchId,reserva.getHotelId(),reserva.getCheckIn(),reserva.getCheckOut(),reserva.getEdades());
-        kafkaTemplate.send(topic, reservaSearchDto);
+        try {
+            kafkaTemplate.send("hotel_availability_searches",mapper.writeValueAsString(reservaSearchDto));
+        } catch (JsonProcessingException e) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"Error al comunicarnos con Kakfa");
+        }
         return searchId;
     }
 

@@ -1,5 +1,7 @@
 package com.plexus.fernando.avoristechAPI.persitence.Dto;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import java.time.OffsetDateTime;
 import java.util.List;
 
@@ -12,6 +14,9 @@ public class ReservaSearchDto {
     private  OffsetDateTime checkOut;
 
     private  List<Integer> edades;
+
+    public ReservaSearchDto() {
+    }
 
     public ReservaSearchDto(String searchId, String hotelId, OffsetDateTime checkIn, OffsetDateTime checkOut, List<Integer> edades) {
         this.searchId = searchId;

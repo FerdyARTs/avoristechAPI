@@ -43,7 +43,7 @@ public class ReservaController {
     @PostMapping("/search")
     public ResponseEntity<String> search(@RequestBody ReservaDto reserva) {
         try {
-            boolean validarPayload = reservaValidator.validarPayload(reserva);
+            reservaValidator.validarPayload(reserva);
             String idReserva = reservaService.guardarBDyDevolverIdentificador(reserva);
 
             return ResponseEntity.status(HttpStatus.OK).body(idReserva.toString());

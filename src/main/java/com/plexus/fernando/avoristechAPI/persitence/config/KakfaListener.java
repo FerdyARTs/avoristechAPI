@@ -1,6 +1,5 @@
 package com.plexus.fernando.avoristechAPI.persitence.config;
 
-import com.plexus.fernando.avoristechAPI.persitence.Dto.ReservaDto;
 import com.plexus.fernando.avoristechAPI.persitence.Dto.ReservaSearchDto;
 import com.plexus.fernando.avoristechAPI.persitence.mapper.ReservaMapper;
 import com.plexus.fernando.avoristechAPI.service.ReservaService;
@@ -21,9 +20,9 @@ public class KakfaListener {
     private static final Logger log = LoggerFactory.getLogger(KakfaListener.class);
 
     @KafkaListener(topics = "hotel_availability_searches", groupId = "group")
-    public void listen(ReservaSearchDto reservaDto) {
+    public void listen(String reservaDto) {
         log.info("Mensaje Recibido: {}", reservaDto);
 
-        reservaService.crearReserva(this.reservaMapper.toEntity(reservaDto));
+//        reservaService.crearReserva(this.reservaMapper.toEntity(reservaDto));
     }
 }
